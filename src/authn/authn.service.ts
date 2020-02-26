@@ -43,16 +43,15 @@ export class AuthService {
     return auth.$get("user").then(required);
   }
 
-  second = 1;
-  minute = 60 * this.second;
-  hour = 60 * this.minute;
-  day = 24 * this.hour;
-  TOKEN_DURATION_SECONDS = this.minute;
+  async login(user: models.User, ip: string): Promise<Token> {
+    // Create a session marker for it
+    await models.Session.create({
+      user_id: user.id
+    });
 
-  async login(user: models.User): Promise<Token> {
-    const payload: TokenPayload = {
-      sub: user.id,
-      exp: new Date().valueOf() + this.minute
+    // Create our payload
+    const payload = {
+      sub: user.id
     };
     return {
       access_token: this.jwtService.sign(payload)

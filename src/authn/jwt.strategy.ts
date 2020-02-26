@@ -4,6 +4,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JWT_CONSTANTS } from "./constants";
 import { models } from "hdf-db-sequelize";
 
+export const SIGN_TIME = "3600s";
 /** Produced when signing a JWT token */
 export interface Token {
   /** The encoded content of the JWT token */
@@ -22,21 +23,23 @@ export interface TokenPayload {
   exp: number;
 }
 
+/**
+ * Apply the following header to any request:
+ * -H "Authorization: Bearer $TOKEN"
+ */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: JWT_CONSTANTS.secret
+      secretOrKey: JWT_CONSTANTS.secret,
+      signOptions: { expiresIn: SIGN_TIME }
     });
   }
 
   async validate(payload: TokenPayload): Promise<models.User> {
     /** It's expired! */
-    if (new Date().valueOf() > payload.exp) {
-      throw new UnauthorizedException("TOKEN_EXPIRED");
-    }
     const user = await models.User.findByPk(payload.sub);
     if (user) {
       return user;

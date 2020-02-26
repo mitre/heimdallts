@@ -22,10 +22,6 @@
   <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
 </p>
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
 ## Installation
 
 ```bash
@@ -148,22 +144,15 @@ Given that Heimdall requires at least a database service, we use Docker Compose.
 #### Setup Docker Container (Clean Install)
 
 1. Install Docker
-2. Download heimdall by running `git clone https://github.com/mitre/heimdall.git`.
-3. Navigate to the base folder where `docker-compose.yml` is located
-4. Run the following commands in a terminal window from the heimdall source directory:
-   1. `./setup-docker-secrets.sh`
-   2. **Optional:** Set a custom root URL by editing the `docker-compose.yml` and changing `HEIMDALL_RELATIVE_URL_ROOT` to the path of your choosing, for example `/heimdall`.
-   3. `docker-compose up -d`
-   4. `docker-compose run --rm web rake db:create db:migrate`
-6. Navigate to `http://127.0.0.1:3000`
+2. ...
 
 #### Managing Docker Container
 
 The following commands are useful for managing the data in your docker container:
 
-- `docker-compose run --rm web rake db:reset` **This destroys and rebuilds the db**
-- `docker-compose run --rm web rake db:migrate` **This updates the db**
-- `docker-compose run --rm web rake data:migrate` **This updates the db**
+- `docker-compose run ???` **This destroys and rebuilds the db**
+- `docker-compose run ???` **This updates the db**
+- `docker-compose run ???` **This updates the db**
 
 #### Running Docker Container
 
@@ -171,7 +160,7 @@ Make sure you have run the setup steps at least once before following these step
 
 1. Run the following command in a terminal window:
    - `docker-compose up -d`
-2. Go to `127.0.0.1:3000` in a web browser
+2. Go to `127.0.0.1:8050` in a web browser
 
 ##### Updating Docker Container
 
@@ -179,9 +168,7 @@ A new version of the docker container can be retrieved by running:
 
 ```
 docker-compose pull
-docker-compose up -d
-docker-compose run web rake db:migrate
-docker-compose run web rake data:migrate
+???
 ```
 
 This will fetch the latest version of the container, redeploy if a newer version exists, and then apply any database migrations if applicable. No data should be lost by this operation.
@@ -189,32 +176,6 @@ This will fetch the latest version of the container, redeploy if a newer version
 ##### Stopping the Container
 
 `docker-compose down` # From the source directory you started from
-
-### Run with Chef Habitat
-
-(Coming Soon)
-
-### Run from Github
-
-This mode is primarily for developers, shared heimdall instances should be deployed in production mode. Since this is a Ruby application it is suggested to use `rbenv` or `RVM` for ruby version management.
-
-1. Install `rbenv` or `RVM`
-2. Install dependencies
-   1. `apt-get install -y build-essential libpq-dev nodejs libxml2-dev libmagick++-dev postgresql-server`
-3. Install ruby by running `rbenv install` or `rvm install $(cat .ruby-version)` from the root directory of this project
-4. Clone the Heimdall Github repository
-5. Run the following in a terminal
-   1. `bundle install`
-   2. `bundle exec rake db:setup`
-   3. `bundle exec rake db:migrate`
-   4. `bundle exec rails s` (Start the server on localhost)
-
-### Updating from GitHub
-1. Pull the latest master from the Heimdall Github repository
-2. Run the following in a terminal
-  1. `bundle exec rake db:migrate`
-  2. `bundle exec rake data:migrate`
-  4. `bundle exec rails s` (Start the server on localhost)
 
 ## Using Heimdall
 
@@ -246,20 +207,7 @@ To upload through curl you'll need an API key. This is located on your profile p
 
 At its most basic, the upload API takes three parameters: the file, your email address, and your API key.
 
-```
-curl -F "file=@FILE_PATH" -F "email=EMAIL" -F "api_key=API_KEY" http://localhost:3000/evaluation_upload_api
-```
-If you are an owner or member of any circles, you can have the uploaded evaluation added to your circle by supplying a circle name parameter:
-
-```
-curl -F "file=@FILE_PATH" -F "email=EMAIL" -F "api_key=API_KEY" -F "circle=CIRCLE NAME" http://localhost:3000/evaluation_upload_api
-```
-
-You can also added parameters for Hostname, UUID, FISMA System, and Environment. The first three can by any string, but the environment needs to be one of ['sandbox, 'dev', 'test', 'impl', 'prod']
-
-```
-curl -F "file=@FILE_PATH" -F "email=EMAIL" -F "api_key=API_KEY" -F "hostname=HOSTNAME" -F "uuid=UUID" -F "fisma system=FISMA" -F "environment=test" http://localhost:3000/evaluation_upload_api
-```
+???
 
 ### Useful Tools
 
@@ -273,39 +221,27 @@ _NOTE_ You should always test like you are in _production_, that is where you ar
 
 ## Configuration
 
-See docker-compose.yml for container configuration
+???
 
 #### Build container from behind an Intercepting proxy
 
-Contact us for advice, we'll be able to send most people our setup.
+???
 
 #### Host container off relative url
 
-Edit RAILS_RELATIVE_URL_ROOT line from docker-compose.yml
+???
 
 #### Switch container to dev mode
 
-Set RAILS_ENV = to development in docker-compose.yml
+???
 
 ## Development
 
+???
+
 ### Dependencies
 
-You can setup a deployment/development environment through bundler or docker.
-
-If you wish to use docker, then the dependencies are:
-
-- Docker
-- docker-compose
-
-If you wish to use ruby and are on Ubuntu 16, then the dependencies are:
-
-- Ruby 2.4.4
-- build-essentials (your distribution's gcc package)
-- Bundler
-- libpq-dev
-- nodejs
-- postgresql
+???
 
 ## Versioning and State of Development
 
@@ -339,9 +275,9 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 3. checkout your repository
 4. cd to the repository
 5. git co -b `<your_branch>`
-6. bundle install
-7. `hack as you will`
-8. test via rake
+
+???
+
 9. ensure unit tests still function and add unit tests for your new feature
 10. add new docs to the `README.md`
 11. (if needed) create and document any example or templates
@@ -369,7 +305,7 @@ After the Pull Request has been merged, switch back to the `master` branch and p
 
 # Testing
 
-There are a set of tests developed using `rspec`. Run `rake spec` to run the tests.
+???
 
 ## Licensing and Authors
 
@@ -377,9 +313,7 @@ There are a set of tests developed using `rspec`. Run `rake spec` to run the tes
 
 - Robert Thew
 - Aaron Lippold
-- Robert Clark
-- Matthew Dromazos
-- Luke Malinowski
+- Jacob Henry
 
 ### NOTICE
 

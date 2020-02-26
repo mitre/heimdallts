@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { models } from "hdf-db-sequelize";
 import { compare, hash } from "bcrypt";
-import { AuthUserPass } from "hdf-db-sequelize/dist/manifest";
+import { AuthUserPass, User } from "hdf-db-sequelize/dist/manifest";
 
 export class UsernameExistsError extends Error {}
 
@@ -26,24 +26,19 @@ export class UsersService {
    */
   async init_new_user(email: string): Promise<models.User> {
     // Make the user
-    const user = models.User.build({
+    const user = await models.User.create({
       /** The contact email of the user. We default this to the provided email */
       contactEmail: email,
       // authUserPass: [auth],
       usergroups: []
     });
-    await user.save();
-
-    console.log(user);
-    console.log(email);
 
     // Make their atomic group
-    const group = new models.Usergroup({
+    const group = await models.Usergroup.create({
       name: `personal_${user.id}`,
       personal: true,
       users: [user]
     });
-    await group.save();
 
     // Return the user
     return user;
@@ -52,17 +47,18 @@ export class UsersService {
   /** Initializes a new user/password pair for the given user, with the given credentials */
   async create_user_login(
     for_user: models.User,
-    email: string,
+    username: string,
     password: string
   ): Promise<AuthUserPass> {
     // Check: is user available?
     if (
       await models.AuthUserPass.findOne({
         where: {
-          username: email
+          username
         }
       })
     ) {
+      console.warn("Attempted to create duplicate user ");
       throw new UsernameExistsError();
     }
 
@@ -70,20 +66,17 @@ export class UsersService {
     const encrypted_password = await UsersService.salt_and_hash(password);
 
     // Make the auth
-    const auth = new models.AuthUserPass({
-      username: email,
+    const auth = await models.AuthUserPass.create({
+      username,
       /** The password, salted and hashed */
       encrypted_password,
       /** Whether this user/pass has been disabled, either manually or via password reset. */
       disabled: false,
       /** When, if ever, this password will expire natrually */
-      expiration: null
+      expiration: null,
+
+      user_id: for_user.id
     });
-
-    // Associate it
-    await auth.$set("user", for_user);
-    await auth.save();
-
     return auth;
   }
 

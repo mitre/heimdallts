@@ -5,6 +5,7 @@ import { AppModule } from "./app.module";
 import * as helmet from "helmet";
 import { init } from "hdf-db-sequelize";
 import { urlencoded, json } from "express";
+import passport = require("passport");
 
 if (
   !(
@@ -27,7 +28,8 @@ async function bootstrap_db(): Promise<void> {
     5432,
     process.env.DATABASE as string,
     process.env.DATABASE_USER as string,
-    process.env.DATABASE_PASSWORD as string
+    process.env.DATABASE_PASSWORD as string,
+    false
   );
   await sequelize.sync({ force: false });
 }

@@ -3,6 +3,6 @@ import { HDFParsePipe } from "./hdf.pipe";
 import { SchemaValidationPipe } from "./schema.pipe";
 
 @Module({
-  exports: [HDFParsePipe, SchemaValidationPipe]
+  providers: [HDFParsePipe, SchemaValidationPipe]
 })
 export class PipeModule {}

@@ -1,14 +1,23 @@
-import { Controller, Req, Get, Post, UseGuards, Body } from "@nestjs/common";
+import {
+  Controller,
+  Req,
+  Get,
+  Post,
+  UseGuards,
+  Body,
+  UsePipes
+} from "@nestjs/common";
 
 import { models } from "hdf-db-sequelize";
-import { Token } from "src/auth/jwt.strategy";
-import { JwtAuthGuard } from "src/auth/jwt.authguard";
-import { LocalAuthGuard } from "src/auth/local.authguard";
+import { Token } from "src/authn/jwt.strategy";
+import { JwtAuthGuard } from "src/authn/jwt.authn-guard";
+import { LocalAuthGuard } from "src/authn/local.authn-guard";
 import { UsersService } from "../users/users.service";
-import { AuthService } from "src/auth/auth.service";
+import { AuthService } from "src/authn/authn.service";
 import { Request } from "express";
 import { IsString } from "class-validator";
 import { SchemaValidationPipe } from "src/validation/schema.pipe";
+import { AuthGuard } from "@nestjs/passport";
 
 export interface ReqWithUser extends Request {
   user: models.User;
@@ -33,8 +42,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login_user_pass(@Req() req: ReqWithUser): Promise<Token> {
-    console.log(req.user);
-    return this.auth_service.login(req.user);
+    return this.auth_service.login(req.user, req.ip);
   }
 
   @UseGuards(JwtAuthGuard)

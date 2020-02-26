@@ -3,7 +3,7 @@ import { HDFParsePipe } from "src/validation/hdf.pipe";
 import { parse } from "inspecjs";
 import { models, intake, output } from "hdf-db-sequelize";
 import { required } from "src/utils";
-import { JwtAuthGuard } from "src/auth/jwt.authguard";
+import { JwtAuthGuard } from "src/authn/jwt.authn-guard";
 
 @Controller("executions")
 export class ExecutionController {
