@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ExecutionController } from "./executions.controller";
+import { ExecutionController } from "./evaluations.controller";
 
 describe("Executions Controller", () => {
   let controller: ExecutionController;

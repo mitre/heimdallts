@@ -97,7 +97,7 @@ export class UsersService {
   async get_current_auth_user_pass(
     user: models.User
   ): Promise<models.AuthUserPass | null> {
-    const auths = await user.$get("authUserPass", {
+    const auths = await user.$get("auth_user_pass", {
       order: ["createdAt", "desc"]
     });
 

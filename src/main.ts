@@ -5,6 +5,7 @@ import { AppModule } from "./app.module";
 import * as helmet from "helmet";
 import { init } from "hdf-db-sequelize";
 import { urlencoded, json } from "express";
+import { MulterModule } from "@nestjs/platform-express";
 import passport = require("passport");
 
 if (
