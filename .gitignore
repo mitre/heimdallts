@@ -33,5 +33,5 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# While we rewrite...
-**/*.rb
+# Temporary files
+tmp/
