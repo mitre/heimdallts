@@ -1,13 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { models } from "hdf-db-sequelize";
 import { compare, hash } from "bcrypt";
-import { AuthUserPass, User } from "hdf-db-sequelize/dist/manifest";
+import { GroupsService } from "src/groups/groups.service";
 
 export class UsernameExistsError extends Error {}
 
 const SALT_ROUNDS = 10;
 @Injectable()
 export class UsersService {
+  constructor(private readonly groups: GroupsService) {}
+
   /** Creates a new user with the given email,
    * and then creates login credentials with that email as a username,
    * and the provided password as a password */
@@ -28,17 +30,11 @@ export class UsersService {
     // Make the user
     const user = await models.User.create({
       /** The contact email of the user. We default this to the provided email */
-      contactEmail: email,
-      // authUserPass: [auth],
-      usergroups: []
+      contactEmail: email
     });
 
-    // Make their atomic group
-    const group = await models.Usergroup.create({
-      name: `personal_${user.id}`,
-      personal: true,
-      users: [user]
-    });
+    // Make their user group
+    await this.groups.create_personal_group(user);
 
     // Return the user
     return user;
@@ -49,7 +45,7 @@ export class UsersService {
     for_user: models.User,
     username: string,
     password: string
-  ): Promise<AuthUserPass> {
+  ): Promise<models.AuthUserPass> {
     // Check: is user available?
     if (
       await models.AuthUserPass.findOne({

@@ -14,10 +14,14 @@ import { JwtAuthGuard } from "src/authn/jwt.authn-guard";
 import { ReqWithUser } from "src/authn/authn.controller";
 import { EvaluationsService } from "./evaluations.service";
 import { models } from "hdf-db-sequelize";
+import { GroupsService } from "src/groups/groups.service";
 
 @Controller("executions")
 export class EvaluationsController {
-  constructor(private readonly evaluations: EvaluationsService) {}
+  constructor(
+    private readonly evaluations: EvaluationsService,
+    private readonly groups: GroupsService
+  ) {}
 
   @Get()
   async list_reports(): Promise<models.Evaluation[]> {
@@ -32,11 +36,13 @@ export class EvaluationsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async upload_execution(
+  async upload_personal_execution(
     @Req() req: ReqWithUser,
     @Body(new HDFParsePipe()) evaluation: parse.AnyExec
   ): Promise<void> {
     /** Upload the execution and store its id */
-    this.evaluations.intake_evaluation(evaluation);
+    let eva = await this.evaluations.intake_evaluation_json(evaluation);
+
+    /** Lookup the personal usergroup of this user */
   }
 }

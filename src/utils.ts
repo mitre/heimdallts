@@ -1,7 +1,26 @@
+import * as fs from "fs";
+
 export class RequiredException extends Error {}
+/** Throws an exception if its input resolves to null or undefined */
 export async function required<T>(v: T | undefined | null): Promise<T> {
   if (v === undefined || v === null) {
     throw new RequiredException();
   }
   return v;
+}
+
+/** Adapts the callback-based file async function to a promise based one */
+export async function read_file_async(
+  path: string | number | Buffer | URL
+  // options?: { encoding?: null; flag?: string | null }
+): Promise<Buffer> {
+  return new Promise((success, failure) => {
+    fs.readFile(path, null, (err, data) => {
+      if (err) {
+        failure(err);
+      } else {
+        success(data);
+      }
+    });
+  });
 }

@@ -4,7 +4,7 @@ import { models } from "hdf-db-sequelize";
 import { required } from "src/utils";
 
 @Injectable()
-export class AuthService {
+export class AuthorizationService {
   constructor(private readonly users_service: UsersService) {}
 
   //async check_access

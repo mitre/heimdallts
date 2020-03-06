@@ -30,7 +30,7 @@ async function bootstrap_db(): Promise<void> {
     process.env.DATABASE as string,
     process.env.DATABASE_USER as string,
     process.env.DATABASE_PASSWORD as string,
-    false
+    false // console.log
   );
   await sequelize.sync({ force: false });
 }

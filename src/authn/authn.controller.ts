@@ -20,7 +20,7 @@ import { SchemaValidationPipe } from "src/validation/schema.pipe";
 import { AuthGuard } from "@nestjs/passport";
 
 export interface ReqWithUser extends Request {
-  user: models.User;
+  db_user: models.User;
 }
 
 /** The body of a registration Request */
@@ -42,13 +42,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login_user_pass(@Req() req: ReqWithUser): Promise<Token> {
-    return this.auth_service.login(req.user, req.ip);
+    return this.auth_service.login(req.db_user, req.ip);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get("profile")
   getProfile(@Req() req: ReqWithUser): models.User {
-    return req.user;
+    return req.db_user;
   }
 
   @Post("register")
