@@ -24,11 +24,49 @@
 
 ## Installation
 
+We're still in early alpha in developing this, so expect this process to become simpler soon, once DB backend is more stable
+
+### Install postgres
+
+Using the method of your choice, install a postgres server on your machine.
+
+Then, create two databases, one with a name of your choice, the other (if you want to run tests) with the specific `heimdallts_jest_testing_service_db`
+
+Edit your bash.profile (or equivalent file/method of setting environment variables) to export the following environment variables:
+
 ```bash
-$ npm install
+export DATABASE="localhost"
+export DATABASE_USER="your db username"
+export DATABASE_PASSWORD="your db password"
+export JWT_SECRET="type some random characters here until we get a better method of generating them"
 ```
 
+### Clone required repositories
+```bash
+git clone https://github.com/mitre/heimdallts.git heimdallts-server
+git clone https://gitlab.mitre.org/rthew/sequelize-typescript-example.git heimdallts-db
+```
+
+### Build DB backend
+```bash
+cd heimdallts-db
+npm i && npm run build && npm link
+cd ..
+```
+
+### Build server
+
+```bash
+cd heimdallts-server
+npm i && npm link hdf-db-sequelize
+```
+
+### Start
+
+`npm run start:dev`
+
 ## Running the app
+
 
 ```bash
 # development
@@ -98,44 +136,8 @@ There two versions of the MITRE Heimdall - the full [Heimdall](https://github.co
 | InSpec Run 'Delta' View                                                        |                   | x                                                                             |
 | Multi-Report Tagging, Filtering and Comparison                                 |                   | x                                                                             |
 
-## Installation
-
-Heimdall supports running via RPM packages, Docker and Chef Habitat(coming soon). For production installations we recommend one of these three methods.
 
 We publish our latest builds on [packackager.io](https://packager.io/gh/mitre/heimdall), [Docker Hub](https://hub.docker.com/r/mitre/heimdall) and Chef Habitat (Coming Soon).
-
-### Run with Vagrant and Virtualbox
-
-You can easily run a local instance for demo and testing purposes using our provided `Vagrantfile` in the project which installs a simple `centos7` VM locally and uses the above RPM method to install, configure and start Heimdall.
-
-1. Install Vagrant
-2. Install a Virtualbox or some other Vagrant support VM system
-3. Grab our [Vagrantfile](https://github.com/mitre/heimdall/blob/master/Vagrantfile) or just clone the github repository.
-4. run `vagrant up` in the directory where you cloned the `heimdall` repo or downloaded the `Vagrantfile`
-5. Navigate to `localhost:3000` once the process is complete
-6. Create your first account
-7. Enjoy
-
-### Run with RPM
-
-To run Heimdall you just need to add the Heimdall [Packager.io](https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo) repository to your Yum configuration and you can easily deploy and update Heimdall on RHEL7/CentOS7 system.
-
-1. `curl -o /etc/yum.repos.d/heimdall.repo https://dl.packager.io/srv/mitre/heimdall/master/installer/el/7.repo`
-2. `yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm`
-3. `yum update`
-4. `yum install -y heimdall`
-5. `/usr/pgsql-11/bin/postgresql-11-setup initdb`
-6. `echo "local   all             all                                trust" > /var/lib/pgsql/11/data/pg_hba.conf`
-7. `systemctl enable postgresql-11`
-8. `systemctl start postgresql-11`
-9. `sudo -u postgres createuser --superuser heimdall`
-10. `heimdall config:set DATABASE_URL=postgresql:///heimdall_production`
-11. `heimdall run rake db:create db:schema:load || true`
-12. `heimdall run rake db:migrate`
-13. `heimdall scale web=1`
-14. Navigate to `hostname:6000`
-15. Create your first account
-16. Enjoy
 
 ### Run With Docker
 
@@ -259,6 +261,8 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 
 ## A complete PR should include 7 core elements:
 
+
+??? 
 - A signed PR ( aka `git commit -a -s` )
 - Code for the new functionality
 - Updates to the CLI
@@ -288,24 +292,8 @@ Please feel free to contact us by **opening an issue** on the issue board, or, a
 
 ### Versioning and the Changelog
 
-There are rake tasks to help with the [Semantic Versioning Policy](https://semver.org/) and updating the Changelog. The rake tasks use the `rake-version` and `github_changelog_generator` gems.
-
-The `github_changelog_generator` gem requires the use of a access token setup with GitHub. Read the gem's [GitHub page](https://github.com/github-changelog-generator/github-changelog-generator#github-token) for instructions on how to setup this token.
-
-If you have the token setup, you should use this set of steps:
-1. run `bundle exec rake change:patch` for bug fixes, or `bundle exec rake change:minor` if you're adding a new feature. This will update the Version number and generate the Changelog.
-2. `git add VERSION` and `git add CHANGELOG.md` to add the files to your commit.
-3. `git commit -m "commit message"`. If your commit fixes an outstanding issue, put the issue number in the commit message, like "Fixes #34"
-4. `git push origin <your_branch>`
-5. In GitHub, open a Pull Request on the MITRE heimdall repository
-
-If you don't have a token setup for the `github_changelog_generator`, you can run the rake task `bundle exec rake version:bump:patch` to bump the Version number without modifying the Changelog. Then, in your Pull Request, add a comment requesting the Changelog be updated after merging.
-
-After the Pull Request has been merged, switch back to the `master` branch and pull the merged code. You can run the `bundle exec rake change:tag` to create a release tagged with the new Version number.
-
-# Testing
-
 ???
+
 
 ## Licensing and Authors
 
@@ -317,7 +305,7 @@ After the Pull Request has been merged, switch back to the `master` branch and p
 
 ### NOTICE
 
-© 2018-2019 The MITRE Corporation.
+© 2019-2020 The MITRE Corporation.
 
 Approved for Public Release; Distribution Unlimited. Case Number 18-3678.
 
