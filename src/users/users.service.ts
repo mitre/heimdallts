@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { models } from "hdf-db-sequelize";
 import { compare, hash } from "bcrypt";
-import { GroupsService } from "src/groups/groups.service";
+import { GroupsService } from "../groups/groups.service";
 
 export class UsernameExistsError extends Error {}
 

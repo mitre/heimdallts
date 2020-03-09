@@ -3,7 +3,7 @@ import {
   BadRequestException,
   UnauthorizedException
 } from "@nestjs/common";
-import { required } from "src/utils";
+import { required } from "../utils";
 import { models } from "hdf-db-sequelize";
 import { Request } from "express";
 

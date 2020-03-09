@@ -1,8 +1,8 @@
 import { Controller, Get, Param, UseGuards } from "@nestjs/common";
-import { JwtAuthGuard } from "src/authn/jwt.authn-guard";
-import { EvaluationsService } from "src/evaluations/evaluations.service";
+import { JwtAuthGuard } from "../authn/jwt.authn-guard";
+import { EvaluationsService } from "../evaluations/evaluations.service";
 import { models } from "hdf-db-sequelize";
-import { GroupsService } from "src/groups/groups.service";
+import { GroupsService } from "../groups/groups.service";
 
 @Controller("teams")
 export class GroupsController {

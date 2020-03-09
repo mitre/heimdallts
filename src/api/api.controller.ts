@@ -3,18 +3,13 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
-  Body,
-  Req,
-  BadRequestException
+  Req
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EvaluationsService } from "../evaluations/evaluations.service";
 import { Request } from "express";
-import { ReqWithUser } from "../authn/authn.controller";
-import { required, read_file_async } from "src/utils";
+import { read_file_async } from "../utils";
 import * as fs from "fs";
-import { models } from "hdf-db-sequelize";
-import { GroupsService } from "../groups/groups.service";
 import { ApiService } from "./api.service";
 
 @Controller()

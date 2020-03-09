@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 import { models } from "hdf-db-sequelize";
 import { JwtService } from "@nestjs/jwt";
-import { TokenPayload, Token } from "./jwt.strategy";
-import { required } from "src/utils";
+import { Token } from "./jwt.strategy";
+import { required } from "../utils";
 
 @Injectable()
 export class AuthService {

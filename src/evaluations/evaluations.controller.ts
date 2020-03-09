@@ -7,14 +7,13 @@ import {
   UseGuards,
   Req
 } from "@nestjs/common";
-import { HDFParsePipe } from "src/validation/hdf.pipe";
+import { HDFParsePipe } from "../validation/hdf.pipe";
 import { parse } from "inspecjs";
-import { required } from "src/utils";
-import { JwtAuthGuard } from "src/authn/jwt.authn-guard";
-import { ReqWithUser } from "src/authn/authn.controller";
+import { JwtAuthGuard } from "../authn/jwt.authn-guard";
+import { ReqWithUser } from "../authn/authn.controller";
 import { EvaluationsService } from "./evaluations.service";
 import { models } from "hdf-db-sequelize";
-import { GroupsService } from "src/groups/groups.service";
+import { GroupsService } from "../groups/groups.service";
 
 @Controller("executions")
 export class EvaluationsController {

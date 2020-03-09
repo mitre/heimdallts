@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { EvaluationsController } from "./evaluations.controller";
 import { EvaluationsService } from "./evaluations.service";
-import { GroupsModule } from "src/groups/groups.module";
+import { GroupsModule } from "../groups/groups.module";
 
 @Module({
   imports: [GroupsModule],

@@ -5,7 +5,6 @@ import {
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Observable } from "rxjs";
-import { models } from "hdf-db-sequelize";
 
 /*
 @Injectable()

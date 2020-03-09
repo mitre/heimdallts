@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { parse } from "inspecjs";
-import { required } from "src/utils";
+import { required } from "../utils";
 import { models, intake, output } from "hdf-db-sequelize";
 
 @Injectable()

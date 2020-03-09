@@ -1,23 +1,14 @@
-import {
-  Controller,
-  Req,
-  Get,
-  Post,
-  UseGuards,
-  Body,
-  UsePipes
-} from "@nestjs/common";
+import { Controller, Req, Get, Post, UseGuards, Body } from "@nestjs/common";
 
 import { models } from "hdf-db-sequelize";
-import { Token } from "src/authn/jwt.strategy";
-import { JwtAuthGuard } from "src/authn/jwt.authn-guard";
-import { LocalAuthGuard } from "src/authn/local.authn-guard";
+import { Token } from "../authn/jwt.strategy";
+import { JwtAuthGuard } from "../authn/jwt.authn-guard";
+import { LocalAuthGuard } from "../authn/local.authn-guard";
 import { UsersService } from "../users/users.service";
-import { AuthService } from "src/authn/authn.service";
+import { AuthService } from "../authn/authn.service";
 import { Request } from "express";
 import { IsString } from "class-validator";
-import { SchemaValidationPipe } from "src/validation/schema.pipe";
-import { AuthGuard } from "@nestjs/passport";
+import { SchemaValidationPipe } from "../validation/schema.pipe";
 
 export interface ReqWithUser extends Request {
   db_user: models.User;
