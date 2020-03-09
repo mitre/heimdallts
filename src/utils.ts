@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import { SSL_OP_EPHEMERAL_RSA } from "constants";
 
 export class RequiredException extends Error {}
 /** Throws an exception if its input resolves to null or undefined */
@@ -22,5 +23,11 @@ export async function read_file_async(
         success(data);
       }
     });
+  });
+}
+
+export async function sleep(timeout_ms?: number): Promise<void> {
+  return new Promise(success => {
+    setTimeout(success, timeout_ms);
   });
 }

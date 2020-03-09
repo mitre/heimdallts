@@ -56,6 +56,36 @@ export class GroupsService {
     return group;
   }
 
+  /** Looksup the team with the given name.  */
+  async get_team_by_name(name: string): Promise<models.Usergroup> {
+    let group_type: models.UsergroupType = "team";
+    return models.Usergroup.findOne({
+      where: {
+        type: group_type,
+        name: name
+      }
+    }).then(required);
+  }
+
+  /** Returns a list of all ad-hoc groups a user is a part of */
+  async get_adhoc_groups(for_user: models.User): Promise<models.Usergroup[]> {
+    let group_type: models.UsergroupType = "ad-hoc";
+
+    // TODO: Test that this actually works
+    return for_user.$get("usergroups", {
+      where: {
+        type: group_type
+      }
+    });
+  }
+
+  /** Lists the evaluations for a group */
+  async list_evaluation(
+    for_group: models.Usergroup
+  ): Promise<models.Evaluation[]> {
+    return for_group.$get("evaluations");
+  }
+
   /** Retrieves the personal usergroup of a user */
   async get_personal_group(for_user: models.User): Promise<models.Usergroup> {
     let name = this.personal_groupname(for_user);

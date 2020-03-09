@@ -3,9 +3,8 @@ import { AppModule } from "./app.module";
 // eslint-disable-next-line
 // @ts-ignore
 import * as helmet from "helmet";
-import { init } from "hdf-db-sequelize";
 import { urlencoded, json } from "express";
-import { MulterModule } from "@nestjs/platform-express";
+import { get_db } from "src/db";
 import passport = require("passport");
 
 if (
@@ -22,19 +21,6 @@ if (
   process.exit(1);
 }
 
-// Bring up sequelize instance
-async function bootstrap_db(): Promise<void> {
-  const sequelize = init(
-    "localhost",
-    5432,
-    process.env.DATABASE as string,
-    process.env.DATABASE_USER as string,
-    process.env.DATABASE_PASSWORD as string,
-    false // console.log
-  );
-  await sequelize.sync({ force: false });
-}
-
 async function bootstrap_server(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.use(helmet());
@@ -44,4 +30,5 @@ async function bootstrap_server(): Promise<void> {
   await app.listen(8050);
 }
 
-bootstrap_db().then(bootstrap_server);
+// Initialize our connections
+get_db().then(bootstrap_server);
