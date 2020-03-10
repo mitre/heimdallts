@@ -58,7 +58,7 @@ cd ..
 
 ```bash
 cd heimdallts-server
-npm i && npm link hdf-db-sequelize
+npm i && npm link heimdallts-db
 ```
 
 ### Start
