@@ -44,7 +44,7 @@ export JWT_SECRET="type some random characters here until we get a better method
 ### Clone required repositories
 ```bash
 git clone https://github.com/mitre/heimdallts.git heimdallts-server
-git clone https://gitlab.mitre.org/rthew/sequelize-typescript-example.git heimdallts-db
+git clone https://github.com/mitre/heimdallts-db.git heimdallts-db
 ```
 
 ### Build DB backend
