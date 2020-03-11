@@ -4,8 +4,9 @@ import {
   UnauthorizedException
 } from "@nestjs/common";
 import { required } from "../utils";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 import { Request } from "express";
+// import { Promise } from "bluebird";
 
 @Injectable()
 export class ApiService {

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 import { required } from "../utils";
 
 @Injectable()

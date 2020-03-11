@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 
 export class SessionDoesNotExistError extends Error {}
 

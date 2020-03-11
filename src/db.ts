@@ -1,4 +1,4 @@
-import { init } from "hdf-db-sequelize";
+import { init } from "heimdallts-db";
 import { sleep } from "./utils";
 import { read } from "fs";
 

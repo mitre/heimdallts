@@ -12,7 +12,7 @@ import { parse } from "inspecjs";
 import { JwtAuthGuard } from "../authn/jwt.authn-guard";
 import { ReqWithUser } from "../authn/authn.controller";
 import { EvaluationsService } from "./evaluations.service";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 import { GroupsService } from "../groups/groups.service";
 
 @Controller("executions")

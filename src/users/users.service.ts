@@ -1,9 +1,20 @@
 import { Injectable } from "@nestjs/common";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 import { compare, hash } from "bcrypt";
 import { GroupsService } from "../groups/groups.service";
+import { BaseError } from "make-error";
+import { required } from "../utils";
 
-export class UsernameExistsError extends Error {}
+export class UserAlreadyExistsError extends BaseError {
+  constructor(email: string) {
+    super(`User with email ${email} already exists`);
+  }
+}
+export class UserDoesNotExistError extends BaseError {
+  constructor(email: string) {
+    super(`User with email ${email} does not exists`);
+  }
+}
 
 const SALT_ROUNDS = 10;
 @Injectable()
@@ -24,14 +35,13 @@ export class UsersService {
 
   /** Creates a user with the provided information. Instantiates their usergroup and associates them. Returns the new user
    *
-   * @param email The email address to use for the user
+   * @param email The email address to use for the user, as a unique identifier and means of contact
    */
   async init_new_user(email: string): Promise<models.User> {
     // Make the user
     const user = await models.User.create({
-      /** The contact email of the user. We default this to the provided email */
-      contactEmail: email
-    });
+      email
+    }).catchThrow(new UserAlreadyExistsError(name));
 
     // Make their user group
     await this.groups.create_personal_group(user);
@@ -54,8 +64,7 @@ export class UsersService {
         }
       })
     ) {
-      console.warn("Attempted to create duplicate user ");
-      throw new UsernameExistsError();
+      throw new UserAlreadyExistsError(username);
     }
 
     // Encrypt the password
@@ -76,11 +85,27 @@ export class UsersService {
     return auth;
   }
 
-  async get_user_login(username: string): Promise<models.AuthUserPass | null> {
+  /** Finds a user by the provided email */
+  async get_user_by_email(email: string): Promise<models.User> {
+    return models.User.findOne({
+      where: {
+        email
+      }
+    })
+      .then(required)
+      .catchThrow(new UserDoesNotExistError(email));
+  }
+
+  /** Finds an user/pass auth item by username (typically the email),
+   * returning the most recent result
+   */
+  async get_login_by_username(
+    username: string
+  ): Promise<models.AuthUserPass | null> {
     // Look up most recent user/password with this username
     return models.AuthUserPass.findOne({
       where: {
-        username: username
+        username
       },
       order: [["createdAt", "DESC"]] // we only want the most recent
     });

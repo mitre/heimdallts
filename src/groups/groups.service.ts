@@ -1,6 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { required } from "../utils";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
+import { BaseError } from "make-error";
+
+class GroupAlreadyExistsException extends BaseError {
+  constructor(team_name: string) {
+    super(`Team ${team_name} already exists.`);
+  }
+}
+
+class GroupDoesNotExistException extends BaseError {
+  constructor(team_name: string) {
+    super(`Team ${team_name} does not exist.`);
+  }
+}
 
 @Injectable()
 export class GroupsService {
@@ -9,6 +22,7 @@ export class GroupsService {
     with_owner: models.User,
     name: string
   ): Promise<models.Usergroup> {
+    // Establish our lookup
     let group_type: models.UsergroupType = "team";
     let member_type: models.MembershipType = "owner";
 
@@ -16,7 +30,7 @@ export class GroupsService {
     let group = await models.Usergroup.create({
       name,
       type: group_type
-    });
+    }).catchThrow(new GroupAlreadyExistsException(name));
 
     // Make them the owner
     await models.Membership.create({
@@ -43,7 +57,7 @@ export class GroupsService {
     let group = await models.Usergroup.create({
       type: group_type,
       name
-    });
+    }).catchThrow(new GroupAlreadyExistsException(name));
 
     // Make the user the owner of the group
     let membership_type: models.MembershipType = "owner";

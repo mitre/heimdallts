@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 import { JwtService } from "@nestjs/jwt";
 import { Token } from "./jwt.strategy";
 import { required } from "../utils";
@@ -18,7 +18,7 @@ export class AuthService {
   ): Promise<
     models.User | "not_found" | "expired" | "disabled" | "bad_password"
   > {
-    const auth = await this.users_service.get_user_login(username);
+    const auth = await this.users_service.get_login_by_username(username);
 
     // Check basic invalidity conditions
     if (!auth) {

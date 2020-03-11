@@ -1,6 +1,6 @@
 import { Controller, Req, Get, Post, UseGuards, Body } from "@nestjs/common";
 
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 import { Token } from "../authn/jwt.strategy";
 import { JwtAuthGuard } from "../authn/jwt.authn-guard";
 import { LocalAuthGuard } from "../authn/local.authn-guard";

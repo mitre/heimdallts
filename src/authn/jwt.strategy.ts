@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JWT_CONSTANTS } from "./constants";
-import { models } from "hdf-db-sequelize";
+import { models } from "heimdallts-db";
 
 export const SIGN_TIME = "3600s";
 /** Produced when signing a JWT token */

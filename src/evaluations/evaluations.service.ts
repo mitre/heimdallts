@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { parse } from "inspecjs";
 import { required } from "../utils";
-import { models, intake, output } from "hdf-db-sequelize";
+import { models, intake, output } from "heimdallts-db";
 
 @Injectable()
 export class EvaluationsService {
