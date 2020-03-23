@@ -5,7 +5,6 @@ import { AppModule } from "./app.module";
 import * as helmet from "helmet";
 import { urlencoded, json } from "express";
 import { get_db } from "./db";
-import passport = require("passport");
 
 if (
   !(

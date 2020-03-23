@@ -46,7 +46,9 @@ export class AuthService {
   async login(user: models.User, ip: string): Promise<Token> {
     // Create a session marker for it
     await models.Session.create({
-      user_id: user.id
+      user_id: user.id,
+      ip,
+      key: "TBD"
     });
 
     // Create our payload
@@ -57,4 +59,19 @@ export class AuthService {
       access_token: this.jwtService.sign(payload)
     };
   }
+}
+
+interface TestHash {
+  test: number;
+}
+
+function blah(): TestHash {
+  let x: Partial<TestHash> = {};
+
+  let val = 0; //;some_ccrazy_complex_steps();
+  x.test = val;
+
+  let x_final: TestHash = x as TestHash;
+
+  return x_final;
 }

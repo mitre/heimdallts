@@ -11,7 +11,7 @@ import { IsString } from "class-validator";
 import { SchemaValidationPipe } from "../validation/schema.pipe";
 
 export interface ReqWithUser extends Request {
-  db_user: models.User;
+  user: models.User;
 }
 
 /** The body of a registration Request */
@@ -33,13 +33,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login_user_pass(@Req() req: ReqWithUser): Promise<Token> {
-    return this.auth_service.login(req.db_user, req.ip);
+    return this.auth_service.login(req.user, req.ip);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get("profile")
   getProfile(@Req() req: ReqWithUser): models.User {
-    return req.db_user;
+    return req.user;
   }
 
   @Post("register")

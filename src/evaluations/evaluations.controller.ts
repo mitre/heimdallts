@@ -43,7 +43,7 @@ export class EvaluationsController {
     let eva = await this.evaluations.intake_evaluation_json(evaluation);
 
     /** Lookup the personal usergroup of this user */
-    let gr = await this.groups.get_personal_group(req.db_user);
+    let gr = await this.groups.get_personal_group(req.user);
 
     /** Grant access */
     await this.evaluations.grant_access(gr, eva);

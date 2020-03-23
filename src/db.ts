@@ -1,6 +1,5 @@
 import { init } from "heimdallts-db";
 import { sleep } from "./utils";
-import { read } from "fs";
 
 export type Sequelize = ReturnType<typeof init>;
 export const TEST_DB = "heimdallts_jest_testing_service_db";
