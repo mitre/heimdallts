@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { SSL_OP_EPHEMERAL_RSA } from "constants";
 
 export class RequiredException extends Error {}
 /** Throws an exception if its input resolves to null or undefined */

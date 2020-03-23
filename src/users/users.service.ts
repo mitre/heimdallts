@@ -38,10 +38,16 @@ export class UsersService {
    * @param email The email address to use for the user, as a unique identifier and means of contact
    */
   async init_new_user(email: string): Promise<models.User> {
+    // Check if one exists
+    let existing = await this.get_user_by_email(email).catch(() => null);
+    if (existing) {
+      throw new UserAlreadyExistsError(email);
+    }
+
     // Make the user
     const user = await models.User.create({
       email
-    }).catchThrow(new UserAlreadyExistsError(name));
+    });
 
     // Make their user group
     await this.groups.create_personal_group(user);

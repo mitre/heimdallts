@@ -61,13 +61,21 @@ export class GroupsService {
 
     // Make the user the owner of the group
     let membership_type: models.MembershipType = "owner";
-    await models.Membership.create({
-      user_id: for_user.id,
-      usergroup_id: group.id,
-      type: membership_type
-    });
+    await this.create_membership(for_user, group, membership_type);
 
     return group;
+  }
+
+  async create_membership(
+    for_user: models.User,
+    in_group: models.Usergroup,
+    as_type: models.MembershipType
+  ): Promise<models.Membership> {
+    return models.Membership.create({
+      user_id: for_user.id,
+      usergroup_id: in_group.id,
+      type: as_type
+    });
   }
 
   /** Looksup the team with the given name.  */
@@ -78,7 +86,9 @@ export class GroupsService {
         type: group_type,
         name: name
       }
-    }).then(required);
+    })
+      .then(required)
+      .catchThrow(new GroupDoesNotExistException(name));
   }
 
   /** Returns a list of all ad-hoc groups a user is a part of */
