@@ -26,7 +26,7 @@ export class ApiController {
     @UploadedFile() file: any
   ): Promise<string> {
     // Do the check
-    let [user, group] = await this.api_service.check_user(req);
+    let group = (await this.api_service.check_user(req))[1]; // Don't need user
 
     // Do intake of file
     const file_contents = await read_file_async(file.path).then(x =>
