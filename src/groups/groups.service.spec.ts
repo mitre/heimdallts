@@ -179,7 +179,7 @@ describe("GroupsService", () => {
 
   it("should be able to form ad-hoc groups", async () => {
     let adhoc_users = [test_user_guest, test_user_user];
-    
+
     // Create the group, say between "user_user" and "gues_user"
     let grp = await group_service.create_adhoc_group(adhoc_users);
 

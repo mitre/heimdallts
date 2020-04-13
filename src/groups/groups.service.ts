@@ -112,6 +112,24 @@ export class GroupsService {
       .catchThrow(new GroupDoesNotExistException(name));
   }
 
+  /** Looks up the team with the given name, but does so through a user and provides said user membership in team */
+  async get_team_by_name_by_user(
+    name: string,
+    for_user: models.User
+  ): Promise<models.Usergroup & { Membership: models.Membership }> {
+    let group_type: models.UsergroupType = "team";
+    return for_user
+      .$get("usergroups", {
+        where: {
+          type: group_type,
+          name: name
+        }
+      })
+      .then(required)
+      .then(x => x[0])
+      .catchThrow(new GroupDoesNotExistException(name));
+  }
+
   /** Join the given user to the given group with the given role */
   async join(
     group: models.Usergroup,
