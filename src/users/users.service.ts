@@ -105,16 +105,20 @@ export class UsersService {
   /** Finds an user/pass auth item by username (typically the email),
    * returning the most recent result
    */
-  async get_login_by_username(
-    username: string
-  ): Promise<models.AuthUserPass | null> {
+  async get_login_by_username(username: string): Promise<models.AuthUserPass> {
     // Look up most recent user/password with this username
     return models.AuthUserPass.findOne({
       where: {
         username
       },
       order: [["createdAt", "DESC"]] // we only want the most recent
-    });
+    })
+      .then(required)
+      .catchThrow(
+        new UserDoesNotExistError(
+          `Could not find login for provided username ${username}`
+        )
+      );
   }
 
   /** Returns the latest auth item for the specified user, iff that item is not expired or disabled.

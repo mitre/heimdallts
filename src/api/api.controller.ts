@@ -3,7 +3,9 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
-  Req
+  UseGuards,
+  Req,
+  Param
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { EvaluationsService } from "../evaluations/evaluations.service";
@@ -11,13 +13,40 @@ import { Request } from "express";
 import { read_file_async } from "../utils";
 import * as fs from "fs";
 import { ApiService } from "./api.service";
+import { GroupsService } from "../groups/groups.service";
+import { JwtAuthGuard } from "../authn/jwt.authn-guard";
+import { ReqWithUser } from "../authn/authn.controller";
+import { BaseError } from "make-error";
 
+class GroupAlreadyExistsException extends BaseError {
+  constructor(team_name: string) {
+    super(`Team ${team_name} already exists.`);
+  }
+}
 @Controller()
 export class ApiController {
   constructor(
     private readonly api_service: ApiService,
-    private readonly eval_service: EvaluationsService
+    private readonly eval_service: EvaluationsService,
+    private readonly group_service: GroupsService
   ) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post("api/generate_team_key/:team_name")
+  async generate_key(
+    @Req() req: ReqWithUser,
+    @Param("team_name") team_name: string
+  ): Promise<string> {
+    // Get the team
+    const team = await this.group_service.get_team_by_name_by_user(
+      team_name,
+      req.user
+    );
+
+    let new_key = await this.api_service.regenerate_key(team.Membership, null);
+
+    return new_key.key;
+  }
 
   @UseInterceptors(FileInterceptor("file", { dest: 'uploads/' }))
   @Post("evaluation_upload_api")
@@ -27,7 +56,7 @@ export class ApiController {
   ): Promise<string> {
 
     // Do the check
-    let [user, group] = await this.api_service.check_user(req);
+    let group = (await this.api_service.check_user(req).then(x => x.$get("usergroup")))!;
 
     console.log("file: " + JSON.stringify(file.originalname));
     // Do intake of file

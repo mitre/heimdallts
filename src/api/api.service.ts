@@ -6,6 +6,12 @@ import {
 import { required } from "../utils";
 import { models } from "heimdallts-db";
 import { Request } from "express";
+
+// eslint-disable-next-line
+// @ts-ignore
+const crypt: any = require("crypto-random-string"); // eslint-disable-line 
+ 
+// cryptoRandomString({length: 10});
 // import { Promise } from "bluebird";
 
 @Injectable()
@@ -15,7 +21,7 @@ export class ApiService {
    *
    * Requires an email and an api key. On successful authentication, responds with the user and their personal usergroup
    */
-  async check_user(req: Request): Promise<[models.User, models.Usergroup]> {
+  async check_user(req: Request): Promise<models.Membership> {
     // Get credentials
     const email: string | undefined = req.body.email;
     const key: string | undefined = req.body.api_key;
@@ -30,15 +36,6 @@ export class ApiService {
       throw new BadRequestException("Missing required field 'key'");
     }
 
-    // Try to lookup up user by email
-    const db_user = await models.User.findOne({
-      where: {
-        email: email
-      }
-    })
-      .then(required)
-      .catchThrow(new UnauthorizedException("Email not recognized"));
-
     // Fetch the key
     const db_key = await models.ApiKey.findOne({
       where: {
@@ -48,25 +45,51 @@ export class ApiService {
       .then(required)
       .catchThrow(new UnauthorizedException("Invalid key"));
 
+
+    // Check the expiration
+    if (db_key.expiration && db_key.expiration < new Date()) {
+      throw new UnauthorizedException("Expired key");
+    }
+
     // Fetch corresponding membership
     const db_key_membership = (await db_key.$get("membership"))!;
     console.log("db_key_membership: " + JSON.stringify(db_key_membership));
     console.log("db_key_user_id: " + db_key_membership.user_id);
 
     // Deduce which user the key ;points to
-    const db_key_user_id = db_key_membership.user_id;
-    console.log("db_key_user_id: " + db_key_user_id);
-    console.log("db_user.id: " + db_user.id);
+    const db_key_user = await db_key_membership.$get("user");
 
-    // Check that our discovered users are the same
-    if (db_key_user_id !== db_user.id) {
+    // Check that our discovered users email matches
+    if (db_key_user?.email !== email) {
       throw new UnauthorizedException("Invalid key");
     }
 
-    // Having done that, retrieve the db keys group.
-    const db_key_group = (await db_key_membership.$get("usergroup"))!;
-
     // Attach the user
-    return [db_user, db_key_group];
+    return db_key_membership;
+  }
+
+  /** Creates a new API key for a membership, removing the old one.
+   * 
+   * @param for_membership The membership to which to bind the key
+   * @param expiration When this new key should naturally expire, if ever
+   */
+  async regenerate_key(for_membership: models.Membership, expiration: Date | null): Promise<models.ApiKey> {
+    // Generate a key
+    // crypt
+    let key: string;
+    let existing: models.ApiKey | null | "n/a" = "n/a";
+
+    // Loop to guarantee uniqueness
+    key = crypt({length: 128});
+    while (existing !== null) {
+      key = crypt({length: 128});
+      existing = await models.ApiKey.findOne({where: {key}});
+    }
+
+    // Know key is unique from here
+    return models.ApiKey.create({
+      expiration,
+      key
+     });
   }
 }

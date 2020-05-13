@@ -50,16 +50,16 @@ export class EvaluationsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post("upload")
   async upload_personal_execution(
     @Req() req: ReqWithUser,
     @Body(new HDFParsePipe()) evaluation: parse.AnyExec
   ): Promise<void> {
-    /** Upload the execution and store its id */
-    let eva = await this.evaluations.intake_evaluation_json(evaluation);
-
     /** Lookup the personal usergroup of this user */
     let gr = await this.groups.get_personal_group(req.user);
+
+    /** Upload the execution and store its id */
+    let eva = await this.evaluations.intake_evaluation_json(evaluation);
 
     /** Grant access */
     await this.evaluations.grant_access(gr, eva);
@@ -73,4 +73,29 @@ export class EvaluationsController {
 
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post("upload/team/:name")
+  async upload_team_evaluation(
+    @Req() req: ReqWithUser,
+    @Body(new HDFParsePipe()) evaluation: parse.AnyExec,
+    @Param("name") team_name: string
+  ): Promise<void> {
+    /** Lookup the team, via membership */
+    let team = await this.groups.get_team_by_name_by_user(team_name, req.user);
+
+    /** Upload the execution and store its id */
+    let eva = await this.evaluations.intake_evaluation_json(evaluation);
+
+    /** Grant access */
+    await this.evaluations.grant_access(team, eva);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("fetch/team/:name")
+  async list_team_evaluations(
+    @Req() req: ReqWithUser,
+    @Param("name") team_name: string
+  ): Promise<void> {
+    throw "Not done!";
+  }
 }

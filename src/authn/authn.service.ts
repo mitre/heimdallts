@@ -60,18 +60,3 @@ export class AuthService {
     };
   }
 }
-
-interface TestHash {
-  test: number;
-}
-
-function blah(): TestHash {
-  let x: Partial<TestHash> = {};
-
-  let val = 0; //;some_ccrazy_complex_steps();
-  x.test = val;
-
-  let x_final: TestHash = x as TestHash;
-
-  return x_final;
-}

@@ -34,6 +34,6 @@ export async function get_db(): Promise<Sequelize> {
       return s;
     });
   } else {
-    return sleep(500).then(() => get_db());
+    return sleep(200).then(get_db);
   }
 }
