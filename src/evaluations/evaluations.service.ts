@@ -129,6 +129,7 @@ export class EvaluationsService {
     if (dto.filename) {
       this.add_tag(eva, "filename", dto.filename);
     }
+    return eva;
   }
 
   /** Gives a usergroup access to an evaluation.
