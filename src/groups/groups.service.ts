@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { required } from "../utils";
 import { models } from "heimdallts-db";
 import { BaseError } from "make-error";
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 
 class GroupAlreadyExistsException extends BaseError {
   constructor(team_name: string) {
@@ -24,7 +24,6 @@ class MembershipError extends BaseError {
 
 @Injectable()
 export class GroupsService {
-
   /** Creates a team with the specified name, and the specified owner. */
   async create_team(
     with_owner: models.User,
@@ -96,7 +95,11 @@ export class GroupsService {
 
     // Make the user the owner of the group
     let membership_type: models.MembershipType = "owner";
-    let membership = await this.create_membership(for_user, group, membership_type);
+    let membership = await this.create_membership(
+      for_user,
+      group,
+      membership_type
+    );
 
     // Create API key for membership
     await this.create_api_key(membership, name, membership_type);

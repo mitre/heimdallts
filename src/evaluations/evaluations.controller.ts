@@ -7,13 +7,26 @@ import {
   UseGuards,
   Req
 } from "@nestjs/common";
-import { HDFParsePipe } from "../validation/hdf.pipe";
 import { parse } from "inspecjs";
 import { JwtAuthGuard } from "../authn/jwt.authn-guard";
 import { ReqWithUser } from "../authn/authn.controller";
 import { EvaluationsService } from "./evaluations.service";
 import { models } from "heimdallts-db";
 import { GroupsService } from "../groups/groups.service";
+
+import { IsString, IsObject, IsOptional } from "class-validator";
+import { SchemaValidationPipe } from "src/validation/schema.pipe";
+
+export class EvaluationDTO {
+  // The filename, if any, to tag the eval with
+  @IsOptional()
+  @IsString()
+  filename!: string;
+
+  // The JSON text of the evaluation. We expect it to be stringified client side
+  @IsString()
+  evaluation!: string;
+}
 
 @Controller("executions")
 export class EvaluationsController {
@@ -34,7 +47,7 @@ export class EvaluationsController {
     @Req() req: ReqWithUser
   ): Promise<models.Evaluation[]> {
     let gr = await this.groups.get_personal_group(req.user);
-    return this.groups.list_evaluation(gr)
+    return this.groups.list_evaluation(gr);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -53,38 +66,30 @@ export class EvaluationsController {
   @Post("upload")
   async upload_personal_execution(
     @Req() req: ReqWithUser,
-    @Body(new HDFParsePipe()) evaluation: parse.AnyExec
+    @Body(new SchemaValidationPipe()) dto: EvaluationDTO
   ): Promise<void> {
     /** Lookup the personal usergroup of this user */
     let gr = await this.groups.get_personal_group(req.user);
 
     /** Upload the execution and store its id */
-    let eva = await this.evaluations.intake_evaluation_json(evaluation);
+    let eva = await this.evaluations.intake_evaluation_dto(dto);
 
     /** Grant access */
     await this.evaluations.grant_access(gr, eva);
-
-    /* Add tags */
-    const filename: string | undefined = req.body.filename;
-    if (filename) {
-      console.log("filename: " + filename);
-      this.evaluations.add_tag(eva, "filename", filename);
-    }
-
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("upload/team/:name")
   async upload_team_evaluation(
     @Req() req: ReqWithUser,
-    @Body(new HDFParsePipe()) evaluation: parse.AnyExec,
+    @Body(new SchemaValidationPipe()) dto: EvaluationDTO,
     @Param("name") team_name: string
   ): Promise<void> {
     /** Lookup the team, via membership */
     let team = await this.groups.get_team_by_name_by_user(team_name, req.user);
 
     /** Upload the execution and store its id */
-    let eva = await this.evaluations.intake_evaluation_json(evaluation);
+    let eva = await this.evaluations.intake_evaluation_dto(dto);
 
     /** Grant access */
     await this.evaluations.grant_access(team, eva);

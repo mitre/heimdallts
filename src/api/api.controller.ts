@@ -48,15 +48,16 @@ export class ApiController {
     return new_key.key;
   }
 
-  @UseInterceptors(FileInterceptor("file", { dest: 'uploads/' }))
+  @UseInterceptors(FileInterceptor("file", { dest: "uploads/" }))
   @Post("evaluation_upload_api")
   async upload_execution(
     @Req() req: Request,
     @UploadedFile() file: any
   ): Promise<string> {
-
     // Do the check
-    let group = (await this.api_service.check_user(req).then(x => x.$get("usergroup")))!;
+    let group = (await this.api_service
+      .check_user(req)
+      .then(x => x.$get("usergroup")))!;
 
     console.log("file: " + JSON.stringify(file.originalname));
     // Do intake of file
@@ -78,7 +79,7 @@ export class ApiController {
     const tag: string[] | undefined = req.body.tag;
     if (tag) {
       console.log("tag: " + JSON.stringify(tag));
-      for (var key in tag) {
+      for (let key in tag) {
         this.eval_service.add_tag(eva, key, tag[key]);
       }
     }

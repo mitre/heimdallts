@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from "@nestjs/common";
 import { parse } from "inspecjs";
 import { required } from "../utils";
 import { models, intake, output } from "heimdallts-db";
+import { EvaluationDTO } from "./evaluations.controller";
 
 @Injectable()
 export class EvaluationsService {
@@ -22,7 +23,7 @@ export class EvaluationsService {
     return models.Tag.findAll({
       where: {
         tagger_id: pk,
-        tagger_type: 'Evaluation',
+        tagger_type: "Evaluation"
       }
     });
   }
@@ -115,7 +116,22 @@ export class EvaluationsService {
     }
   }
 
-    /** Gives a usergroup access to an evaluation.
+  /**
+   * Intakes an Evaluation DTO.
+   * This essentially just wraps intake_evaluation_raw
+   * and adds tags
+   */
+  async intake_evaluation_dto(dto: EvaluationDTO): Promise<models.Evaluation> {
+    /** Upload the execution and store its id */
+    let eva = await this.intake_evaluation_raw(dto.evaluation);
+
+    /* Add tags. Given that this is duplicate behavior, this should maybe broken to a helper function */
+    if (dto.filename) {
+      this.add_tag(eva, "filename", dto.filename);
+    }
+  }
+
+  /** Gives a usergroup access to an evaluation.
    * Returns the binding entity
    */
   async add_tag(
@@ -128,7 +144,7 @@ export class EvaluationsService {
     let existing = await models.Tag.findOne({
       where: {
         tagger_id: evaluation.id,
-        tagger_type: 'Evaluation',
+        tagger_type: "Evaluation",
         content: content
       }
     });
@@ -138,7 +154,7 @@ export class EvaluationsService {
       console.log("create tag");
       return models.Tag.create({
         tagger_id: evaluation.id,
-        tagger_type: 'Evaluation',
+        tagger_type: "Evaluation",
         content: content
       });
     } else {
@@ -146,5 +162,4 @@ export class EvaluationsService {
       return existing;
     }
   }
-
 }

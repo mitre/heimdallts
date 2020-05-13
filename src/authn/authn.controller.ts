@@ -43,8 +43,7 @@ class ProfileDTO {
 export class AuthController {
   constructor(
     private readonly user_service: UsersService,
-    private readonly auth_service: AuthService,
-    //private readonly groups: GroupsService
+    private readonly auth_service: AuthService //private readonly groups: GroupsService
   ) {}
 
   @UseGuards(LocalAuthGuard)

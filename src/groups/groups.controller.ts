@@ -18,12 +18,12 @@ export class GroupsController {
   async usergroups(@Req() req: ReqWithUser): Promise<models.Usergroup[]> {
     let personal_group = await this.groups.get_personal_group(req.user);
     let ad_hocs = await this.groups.get_adhoc_groups(req.user);
-    ad_hocs.unshift(personal_group)
+    ad_hocs.unshift(personal_group);
     console.log(JSON.stringify(ad_hocs));
     return ad_hocs;
   }
 
-   //curl -X GET http://localhost:8050/teams/teamname_1/list -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTU4ODI1Njc3OSwiZXhwIjoxNTg4MjYwMzc5fQ.MIiSj-xim_cGGOp7pHrxNF_TiSiYCxDtn61fnvcmpk0"
+  //curl -X GET http://localhost:8050/teams/teamname_1/list -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTU4ODI1Njc3OSwiZXhwIjoxNTg4MjYwMzc5fQ.MIiSj-xim_cGGOp7pHrxNF_TiSiYCxDtn61fnvcmpk0"
   @UseGuards(JwtAuthGuard)
   @Get(":name/list")
   async list_team_reports(

@@ -10,7 +10,7 @@ import { Request } from "express";
 // eslint-disable-next-line
 // @ts-ignore
 const crypt: any = require("crypto-random-string"); // eslint-disable-line 
- 
+
 // cryptoRandomString({length: 10});
 // import { Promise } from "bluebird";
 
@@ -45,7 +45,6 @@ export class ApiService {
       .then(required)
       .catchThrow(new UnauthorizedException("Invalid key"));
 
-
     // Check the expiration
     if (db_key.expiration && db_key.expiration < new Date()) {
       throw new UnauthorizedException("Expired key");
@@ -69,27 +68,30 @@ export class ApiService {
   }
 
   /** Creates a new API key for a membership, removing the old one.
-   * 
+   *
    * @param for_membership The membership to which to bind the key
    * @param expiration When this new key should naturally expire, if ever
    */
-  async regenerate_key(for_membership: models.Membership, expiration: Date | null): Promise<models.ApiKey> {
+  async regenerate_key(
+    for_membership: models.Membership,
+    expiration: Date | null
+  ): Promise<models.ApiKey> {
     // Generate a key
     // crypt
     let key: string;
     let existing: models.ApiKey | null | "n/a" = "n/a";
 
     // Loop to guarantee uniqueness
-    key = crypt({length: 128});
+    key = crypt({ length: 128 });
     while (existing !== null) {
-      key = crypt({length: 128});
-      existing = await models.ApiKey.findOne({where: {key}});
+      key = crypt({ length: 128 });
+      existing = await models.ApiKey.findOne({ where: { key } });
     }
 
     // Know key is unique from here
     return models.ApiKey.create({
       expiration,
       key
-     });
+    });
   }
 }
