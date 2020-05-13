@@ -17,6 +17,16 @@ export class EvaluationsService {
     });
   }
 
+  /** Returns all tags on an evaluation. */
+  async get_tags(pk: number): Promise<models.Tag[]> {
+    return models.Tag.findAll({
+      where: {
+        tagger_id: pk,
+        tagger_type: 'Evaluation',
+      }
+    });
+  }
+
   /** Gives a usergroup access to an evaluation.
    * Returns the binding entity
    */
@@ -104,4 +114,37 @@ export class EvaluationsService {
       throw new BadRequestException("Invalid inspec JSON evaluation");
     }
   }
+
+    /** Gives a usergroup access to an evaluation.
+   * Returns the binding entity
+   */
+  async add_tag(
+    evaluation: models.Evaluation,
+    name: string,
+    value: string
+  ): Promise<models.Tag> {
+    // check if it's there already
+    let content = JSON.parse(`{"name": "${name}", "value": "${value}"}`);
+    let existing = await models.Tag.findOne({
+      where: {
+        tagger_id: evaluation.id,
+        tagger_type: 'Evaluation',
+        content: content
+      }
+    });
+
+    // If it isn't, create it. If it is, return it
+    if (existing == null) {
+      console.log("create tag");
+      return models.Tag.create({
+        tagger_id: evaluation.id,
+        tagger_type: 'Evaluation',
+        content: content
+      });
+    } else {
+      console.log("tag exists");
+      return existing;
+    }
+  }
+
 }

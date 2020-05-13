@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { required } from "../utils";
 import { models } from "heimdallts-db";
 import { BaseError } from "make-error";
+import { v4 as uuid } from 'uuid';
 
 class GroupAlreadyExistsException extends BaseError {
   constructor(team_name: string) {
@@ -23,6 +24,7 @@ class MembershipError extends BaseError {
 
 @Injectable()
 export class GroupsService {
+
   /** Creates a team with the specified name, and the specified owner. */
   async create_team(
     with_owner: models.User,
@@ -94,9 +96,38 @@ export class GroupsService {
 
     // Make the user the owner of the group
     let membership_type: models.MembershipType = "owner";
-    await this.join(group, for_user, membership_type);
+    let membership = await this.create_membership(for_user, group, membership_type);
+
+    // Create API key for membership
+    await this.create_api_key(membership, name, membership_type);
+    //await this.join(group, for_user, membership_type);
 
     return group;
+  }
+
+  async create_membership(
+    for_user: models.User,
+    in_group: models.Usergroup,
+    as_type: models.MembershipType
+  ): Promise<models.Membership> {
+    return models.Membership.create({
+      user_id: for_user.id,
+      usergroup_id: in_group.id,
+      type: as_type
+    });
+  }
+
+  async create_api_key(
+    for_membership: models.Membership,
+    group_name: string,
+    member_type: string
+  ): Promise<models.ApiKey> {
+    const api_key: string = uuid();
+    return models.ApiKey.create({
+      key: api_key,
+      membership_id: for_membership.id,
+      name: group_name + " " + member_type + " key"
+    });
   }
 
   /** Looks up the team with the given name.  */
@@ -240,7 +271,9 @@ export class GroupsService {
   async list_evaluation(
     for_group: models.Usergroup
   ): Promise<models.Evaluation[]> {
-    return for_group.$get("evaluations");
+    return for_group.$get("evaluations", {
+      include: [models.Tag]
+    });
   }
 
   /** Retrieves the personal usergroup of a user */

@@ -23,7 +23,7 @@ export async function get_db(): Promise<Sequelize> {
       process.env.DATABASE as string,
       process.env.DATABASE_USER as string,
       process.env.DATABASE_PASSWORD as string,
-      false // console.log
+      true // console.log
     );
     if (process.env.DATABASE === TEST_DB) {
       // Additionally wipe the DB
