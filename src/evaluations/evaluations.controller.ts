@@ -44,6 +44,12 @@ export class EvaluationsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get("tags/:id")
+  async fetch_tags(@Param("id") id: number): Promise<models.Tag[]> {
+    return this.evaluations.get_tags(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   async upload_personal_execution(
     @Req() req: ReqWithUser,
@@ -57,6 +63,14 @@ export class EvaluationsController {
 
     /** Grant access */
     await this.evaluations.grant_access(gr, eva);
+
+    /* Add tags */
+    const filename: string | undefined = req.body.filename;
+    if (filename) {
+      console.log("filename: " + filename);
+      this.evaluations.add_tag(eva, "filename", filename);
+    }
+
   }
 
 }

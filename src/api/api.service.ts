@@ -20,7 +20,9 @@ export class ApiService {
     const email: string | undefined = req.body.email;
     const key: string | undefined = req.body.api_key;
 
-    // Validate that they were provided
+    console.log("email: " + email);
+    console.log("key: " + key);
+
     if (!email) {
       throw new BadRequestException("Missing required field 'email'");
     }
@@ -48,9 +50,13 @@ export class ApiService {
 
     // Fetch corresponding membership
     const db_key_membership = (await db_key.$get("membership"))!;
+    console.log("db_key_membership: " + JSON.stringify(db_key_membership));
+    console.log("db_key_user_id: " + db_key_membership.user_id);
 
     // Deduce which user the key ;points to
-    const db_key_user_id = db_key_membership.user;
+    const db_key_user_id = db_key_membership.user_id;
+    console.log("db_key_user_id: " + db_key_user_id);
+    console.log("db_user.id: " + db_user.id);
 
     // Check that our discovered users are the same
     if (db_key_user_id !== db_user.id) {

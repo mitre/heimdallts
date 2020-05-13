@@ -59,25 +59,6 @@ export class AuthController {
     return req.user;
   }
 
-/*
-  @UseGuards(JwtAuthGuard)
-  @Get("profile")
-  async getProfile(@Req() req: ReqWithUser): Promise<ProfileDTO> {
-    let profile_dto: ProfileDTO = new ProfileDTO;
-    profile_dto.id = req.user.id;
-    profile_dto.first_name = req.user.first_name;
-    profile_dto.last_name = req.user.last_name;
-    profile_dto.email = req.user.email;
-    profile_dto.image = req.user.image;
-    profile_dto.phone_number = req.user.phone_number;
-    profile_dto.createdAt = req.user.createdAt;
-    profile_dto.updatedAt = req.user.updatedAt;
-    profile_dto.personal_group = await this.groups.get_personal_group(req.user);
-    profile_dto.ad_hoc_groups = await this.groups.get_adhoc_groups(req.user);
-    console.log(JSON.stringify(profile_dto));
-    return profile_dto;
-  }
-*/
   @Post("register")
   async register(
     @Body(new SchemaValidationPipe()) register_dto: RegisterDTO
