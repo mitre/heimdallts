@@ -6,7 +6,10 @@ import { models, intake, output } from "heimdallts-db";
 @Injectable()
 export class EvaluationsService {
   async get_by_pk(pk: number): Promise<parse.AnyExec> {
-    const mdl = await models.Evaluation.findByPk(pk).then(required);
+    const mdl = await models.Evaluation.findByPk(pk, {
+      include: [{all: true}]
+    }).then(required);
+    console.log(JSON.stringify(mdl));
     return output.convert_evaluation(mdl);
   }
 
@@ -25,6 +28,16 @@ export class EvaluationsService {
         tagger_type: 'Evaluation',
       }
     });
+  }
+
+  /** Returns all tags on an evaluation. */
+  async remove_tag(pk: number, tag_id: number) {
+    const tag_obj = await models.Tag.findByPk(tag_id);
+    if (tag_obj) {
+      if (tag_obj.tagger_id == pk) {
+        tag_obj.destroy();
+      }
+    }
   }
 
   /** Gives a usergroup access to an evaluation.

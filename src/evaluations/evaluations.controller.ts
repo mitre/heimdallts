@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Post,
+  Delete,
   Body,
   UseGuards,
   Req
@@ -14,6 +15,16 @@ import { ReqWithUser } from "../authn/authn.controller";
 import { EvaluationsService } from "./evaluations.service";
 import { models } from "heimdallts-db";
 import { GroupsService } from "../groups/groups.service";
+import { IsString } from "class-validator";
+
+/** The body of a registration Request */
+class TagDTO {
+  @IsString()
+  name!: string;
+
+  @IsString()
+  value!: string;
+}
 
 @Controller("executions")
 export class EvaluationsController {
@@ -46,6 +57,13 @@ export class EvaluationsController {
   @UseGuards(JwtAuthGuard)
   @Get("tags/:id")
   async fetch_tags(@Param("id") id: number): Promise<models.Tag[]> {
+    return this.evaluations.get_tags(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(":id/tags/:tag_id")
+  async remove(@Param('id') id: number, @Param('tag_id') tag_id: number): Promise<models.Tag[]> {
+    this.evaluations.remove_tag(id, tag_id);
     return this.evaluations.get_tags(id);
   }
 
@@ -98,4 +116,19 @@ export class EvaluationsController {
   ): Promise<void> {
     throw "Not done!";
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("tags/:id")
+  async upload_tag(
+    @Param("id") id: number,
+    @Req() req: ReqWithUser,
+    @Body() tag_dto: TagDTO
+  ): Promise<void> {
+    const eva = await models.Evaluation.findByPk(id);
+    /* Add tag */
+    if (eva) {
+      await this.evaluations.add_tag(eva, tag_dto.name, tag_dto.value);
+    }
+  }
+
 }
