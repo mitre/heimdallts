@@ -21,6 +21,11 @@ const SALT_ROUNDS = 10;
 export class UsersService {
   constructor(private readonly groups: GroupsService) {}
 
+  /** Get all users */
+  async get_users(): Promise<models.User[]> {
+    return models.User.findAll().then(required);
+  }
+
   /** Creates a new user with the given email,
    * and then creates login credentials with that email as a username,
    * and the provided password as a password */
