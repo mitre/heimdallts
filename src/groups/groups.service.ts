@@ -134,6 +134,30 @@ export class GroupsService {
   }
 
   /** Looks up the team with the given name.  */
+  async get_team_by_pk(pk: number): Promise<models.Usergroup> {
+    return models.Usergroup.findByPk(pk).then(required);
+  }
+
+  /** Looks up the team with the given name.  */
+  async get_full_team_by_pk(pk: number): Promise<models.Usergroup> {
+    return models.Usergroup.findByPk(pk, {
+      include: [
+        {
+          model: models.Evaluation,
+          include: [
+            {
+              model: models.Tag
+            }
+          ]
+        },
+        {
+          model: models.User,
+        }
+      ]}).then(required);
+  }
+
+
+  /** Looks up the team with the given name.  */
   async get_team_by_name(name: string): Promise<models.Usergroup> {
     let group_type: models.UsergroupType = "team";
     return models.Usergroup.findOne({
@@ -234,7 +258,7 @@ export class GroupsService {
     await membership.destroy();
   }
 
-  /** Returns a list of all ad-hoc groups a user is a part of */
+  /** Returns a list of all team groups a user is a part of */
   async get_teams(for_user: models.User): Promise<models.Usergroup[]> {
     let group_type: models.UsergroupType = "team";
 

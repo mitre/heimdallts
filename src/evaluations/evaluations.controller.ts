@@ -13,8 +13,8 @@ import { ReqWithUser } from "../authn/authn.controller";
 import { EvaluationsService } from "./evaluations.service";
 import { models } from "heimdallts-db";
 import { GroupsService } from "../groups/groups.service";
-
-import { IsString, IsObject, IsOptional } from "class-validator";
+import { required } from "../utils";
+import { IsString, IsObject, IsOptional, IsArray } from "class-validator";
 import { SchemaValidationPipe } from "src/validation/schema.pipe";
 
 export class EvaluationDTO {
@@ -26,6 +26,10 @@ export class EvaluationDTO {
   // The JSON text of the evaluation. We expect it to be stringified client side
   @IsString()
   evaluation!: string;
+}
+export class AddToUsergroupDTO {
+  @IsArray()
+  ids!: number[];
 }
 
 @Controller("executions")
@@ -102,5 +106,19 @@ export class EvaluationsController {
     @Param("name") team_name: string
   ): Promise<void> {
     throw "Not done!";
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("addusergroup/:id")
+  async add_to_usergroup(
+    @Param("id") id: number,
+    @Req() req: ReqWithUser,
+    @Body() evas_dto: AddToUsergroupDTO
+  ): Promise<void> {
+    let team = await this.groups.get_team_by_pk(id);
+    for (let eva_id of evas_dto.ids) {
+      let eva: models.Evaluation = await models.Evaluation.findByPk(eva_id).then(required)
+      await this.evaluations.grant_access(team, eva);
+    }
   }
 }
