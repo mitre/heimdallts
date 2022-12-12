@@ -23,7 +23,7 @@
     "@nestjs/core": "^6.7.2",
     "@nestjs/jwt": "^6.1.1",
     "@nestjs/passport": "^6.1.1",
-    "@nestjs/platform-express": "^6.7.2",
+    "@nestjs/platform-express": "^9.2.1",
     "@types/bcrypt": "^3.0.0",
     "bcrypt": "^3.0.8",
     "class-transformer": "^0.2.3",
